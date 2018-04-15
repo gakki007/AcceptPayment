@@ -1,0 +1,89 @@
+<html>
+	<head>
+		<title>Accept payment</title>
+		<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>	
+        <link rel="stylesheet" href="./css/styles.css">	
+		<script src="./models/client_settings.js"></script>			
+		<script>
+
+            $(function(){	
+	
+                $('#validate_data').click(function(e){
+					var mydata = {};
+					mydata.number = $('#cardnumber').val();
+					mydata.cvv =  $('#cvv').val();
+					mydata.name_on_card =  $('#name_on_card').val();
+					mydata.expiry_month =  $('#expiry_month').val();
+					mydata.expiry_year =  $('#expiry_year').val();
+					
+				   $.ajax({
+						dataType: 'jsonp',
+						data: mydata,				
+						jsonp: 'callback',
+						url: server_url + '?callback=?',						
+						success: function(data) {
+							console.log('success');
+							console.log(JSON.stringify(data));
+							msg(JSON.stringify(data));
+						},
+						error: function(xhr, status, error) {
+						  alert(error);
+						}
+					});
+
+                });		
+
+				// add a total of 6 years, starting from this year	
+				var starting_year = new Date().getFullYear();					
+				var expiry_year = $("#expiry_year");
+				for (i = starting_year; i < starting_year+6; i++) { 
+					expiry_year.append($("<option />").val(i).text(i));
+				}
+				
+            });
+			
+			function msg(s){
+			  alert(s.slice(1,-1).replace(/<bullet>/g, '\n\u2022').replace(/<br>/g, '\n'))
+			}
+        </script>
+    </head>
+    <body>
+        <div id="content"  >
+		   <table style="width: 420px; margin: 0px auto;">
+		      <tr><th colspan="2">Card Validation</th></tr>		      
+			  <tr><td>&nbsp;</td></tr>
+		      <tr>
+			    <td>Card number:</td><td><input type="text" id="cardnumber" style="width: 200px" maxlength="16"></td>
+			  </tr>
+		      <tr>
+			    <td>CVV:</td><td><input type="text" id="cvv" style="width: 50px" maxlength="3"></td>
+			  </tr>
+		      <tr>
+			    <td>Name on card:</td><td><input type="text" id="name_on_card" style="width: 300px" maxlength="80"></td>
+			  </tr>			  
+		      <tr>
+			    <td>Expiry:</td>
+				<td>
+					<select id="expiry_month">
+					  <option value="1">Jan</option>
+					  <option value="2">Feb</option>
+					  <option value="3">Mar</option>
+					  <option value="4">Apr</option>
+					  <option value="5">May</option>
+					  <option value="6">Jun</option>
+					  <option value="7">Jul</option>
+					  <option value="8">Aug</option>
+					  <option value="9">Sep</option>
+					  <option value="10">Oct</option>
+					  <option value="11">Nov</option>
+					  <option value="12">Dec</option>
+					</select>				
+				    <select id="expiry_year"></select>
+				</td>
+			  </tr>
+			</table></br>
+			<button  id="validate_data">Validate</button>
+
+		</div>   
+    </body>
+</html>
